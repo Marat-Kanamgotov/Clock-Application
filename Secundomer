@@ -1,0 +1,55 @@
+import tkinter
+from datetime import datetime
+
+class Secundomer:
+    def __init__(self, root):
+        self.root = root
+        self.temp = 0
+        self.after_id = ''
+        self.label1 = tkinter.Label(root, width=10, font=('Comic Sans MS', 30), text='00:00.00')
+        self.label1.pack()
+
+        self.btnStart = tkinter.Button(root, text='Start', font=('Comic Sans MS', 20), width=15, command=self.start_tick)
+        self.btnStop = tkinter.Button(root, text='Stop', font=('Comic Sans MS', 20), width=15, command=self.stop_tick)
+        self.btnContinue = tkinter.Button(root, text='Start', font=('Comic Sans MS', 20), width=15, command=self.continue_tick)
+        self.btnReset = tkinter.Button(root, text='Reset', font=('Comic Sans MS', 20), width=15, command=self.reset_tick)
+        self.btnStart.pack()
+
+    def tick(self):
+        self.after_id = self.root.after(10, self.tick)
+        f_temp = datetime.fromtimestamp(self.temp).strftime("%M:%S.%f")[:-4]
+        self.label1.configure(text=str(f_temp))
+        self.temp += 0.01
+
+    def start_tick(self):
+        self.btnStart.pack_forget()
+        self.btnStop.pack()
+        self.tick()
+
+    def stop_tick(self):
+        self.btnStop.pack_forget()
+        self.btnContinue.pack()
+        self.btnReset.pack()
+        self.root.after_cancel(self.after_id)
+
+    def continue_tick(self):
+        self.btnContinue.pack_forget()
+        self.btnReset.pack_forget()
+        self.btnStop.pack()
+        self.tick()
+
+    def reset_tick(self):
+        self.temp = 0
+        self.label1.configure(text='00:00.00')
+        self.btnContinue.pack_forget()
+        self.btnReset.pack_forget()
+        self.btnStart.pack()
+
+root = tkinter.Tk()
+root.title('Secundomer')
+root.resizable(width=False, height=False)
+root.geometry('400x400')
+
+secundomer = Secundomer(root)
+
+root.mainloop()
